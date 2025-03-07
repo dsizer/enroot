@@ -414,6 +414,17 @@ runtime::create() {
         fi
     fi
 
+    if [ -n "${ENROOT_TRANSFERRED_IMAGE_PATH}" ]; then
+        local transferred_image_dir transferred_image_path
+        transferred_image_dir="${ENROOT_TRANSFERRED_IMAGE_PATH}/$(basename "${rootfs}")"
+        mkdir -p "${transferred_image_dir}"
+        transferred_image_path=$(common::realpath "${transferred_image_dir}/$(basename "${image}")")
+        if [ -f "${transferred_image_path}" ]; then
+            image="${transferred_image_path}"
+            common::log INFO "Using transferred image path: ${image}" NL
+        fi
+    fi
+
     # Extract the container rootfs from the image.
     common::log INFO "Extracting squashfs filesystem..." NL
     # XXX: https://github.com/NVIDIA/enroot/issues/90
